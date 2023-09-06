@@ -26,11 +26,5 @@ public class TelegramBotInitializer {
         } catch (TelegramApiException e) {
             LOGGER.error("Error occurred:", e);
         }
-
-        try {
-            Thread.sleep(10000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

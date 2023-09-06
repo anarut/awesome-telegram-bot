@@ -10,9 +10,12 @@ import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingC
 import org.telegram.telegrambots.meta.api.methods.ActionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -52,6 +55,32 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 
     @Override
     public void processNonCommandUpdate(Update update) {
+        if (update.hasCallbackQuery()) {
+            CallbackQuery callbackQuery = update.getCallbackQuery();
+
+            InlineKeyboardButton button1 = new InlineKeyboardButton();
+            button1.setText("option 2.1 " + Emoji.BALLOT_BOX.getStringValue());
+            button1.setCallbackData("2.1");
+
+            InlineKeyboardButton button2 = new InlineKeyboardButton();
+            button2.setText("option 2.2 " + Emoji.BALLOT_BOX_WITH_CHECK.getStringValue());
+            button2.setCallbackData("2.2");
+
+            InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
+            keyboard.setKeyboard(List.of(List.of(button1, button2)));
+
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setChatId(callbackQuery.getMessage().getChatId());
+            sendMessage.setText("Choose one:");
+            sendMessage.setReplyMarkup(keyboard);
+
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (update.hasMessage()) {
             Message message = update.getMessage();
 
